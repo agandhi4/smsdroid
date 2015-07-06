@@ -19,13 +19,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-    <com.google.android.gms.ads.AdView
-            android:id="@+id/ads"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:adUnitId="ca-app-pub-1948477123608376/5569580480"
-            app:adSize="SMART_BANNER"/>
-
     <ListView
             android:id="@id/android:list"
             android:layout_width="fill_parent"

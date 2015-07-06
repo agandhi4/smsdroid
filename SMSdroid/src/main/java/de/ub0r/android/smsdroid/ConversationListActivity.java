@@ -18,10 +18,6 @@
  */
 package de.ub0r.android.smsdroid;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -53,6 +49,10 @@ import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 import java.util.Calendar;
 
@@ -338,9 +338,6 @@ public final class ConversationListActivity extends SherlockActivity implements
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getSupportMenuInflater().inflate(R.menu.conversationlist, menu);
-        if (DonationHelper.hideAds(this)) {
-            menu.removeItem(R.id.item_donate);
-        }
         return true;
     }
 
@@ -465,13 +462,6 @@ public final class ConversationListActivity extends SherlockActivity implements
                     startActivity(new Intent(this, Preferences11Activity.class));
                 } else {
                     startActivity(new Intent(this, PreferencesActivity.class));
-                }
-                return true;
-            case R.id.item_donate:
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, DonationHelper.DONATOR_URI));
-                } catch (ActivityNotFoundException e) {
-                    Log.e(TAG, "error opening play store with donation app", e);
                 }
                 return true;
             case R.id.item_delete_all_threads:
