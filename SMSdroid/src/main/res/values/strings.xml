@@ -217,5 +217,7 @@
     <string name="forwarded_sms_clean_hint">Strips sender in received sms according to "([0-9a-zA-Z]+):" and use that this number as sender.</string>
     <string name="error_unknown">Unknown error</string>
     <string name="donate_remove_ads_">Donate/remove ads</string>
+    <string name="add_group_">Add group</string>
+    <string name="add_contact_to_group_">Add Contact</string>
 
 </resources>

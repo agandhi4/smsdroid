@@ -1,21 +1,3 @@
-/*
- * Copyright (C) 2009-2015 Felix Bechstein
- * 
- * This file is part of SMSdroid.
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 3 of the License, or (at your option) any later
- * version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/>.
- */
 package de.ub0r.android.smsdroid;
 
 import android.annotation.TargetApi;
@@ -66,7 +48,7 @@ import de.ub0r.android.logg0r.Log;
  *
  * @author flx
  */
-public final class ConversationListActivity extends SherlockActivity implements
+public final class GroupListActivity extends SherlockActivity implements
         OnItemClickListener, OnItemLongClickListener {
 
     /**
@@ -272,7 +254,7 @@ public final class ConversationListActivity extends SherlockActivity implements
                 .getBoolean("use_gridlayout", false)) {
             setContentView(R.layout.conversationgrid);
         } else {
-            setContentView(R.layout.conversationlist);
+            setContentView(R.layout.grouplist);
         }
 
         // debug info
@@ -378,7 +360,7 @@ public final class ConversationListActivity extends SherlockActivity implements
      * @param activity {@link Activity} to finish when deleting.
      */
     static void deleteMessages(final Context context, final Uri uri, final int title,
-            final int message, final Activity activity) {
+                               final int message, final Activity activity) {
         Log.i(TAG, "deleteMessages(..,", uri, " ,..)");
         final Builder builder = new Builder(context);
         builder.setTitle(title);
@@ -436,46 +418,16 @@ public final class ConversationListActivity extends SherlockActivity implements
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_compose:
-                final Intent i = getComposeIntent(this, null, false);
-                try {
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-                    Log.e(TAG, "error launching intent: ", i.getAction(), ", ", i.getData());
-                    Toast.makeText(this,
-                            "error launching messaging app!\nPlease contact the developer.",
-                            Toast.LENGTH_LONG).show();
-                }
-                return true;
-            case R.id.add_group:
-                startActivity(new Intent(this, GroupListActivity.class));
-                return true;
-            case R.id.item_settings: // start settings activity
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    startActivity(new Intent(this, Preferences11Activity.class));
-                } else {
-                    startActivity(new Intent(this, PreferencesActivity.class));
-                }
-                return true;
-            case R.id.item_mark_all_read:
-                markRead(this, Uri.parse("content://sms/"), 1);
-                markRead(this, Uri.parse("content://mms/"), 1);
+            case R.id.item_add_contact: // start settings activity
+                // TODO, add contact code here
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    /**
-     * Get a {@link Intent} for sending a new message.
-     *
-     * @param context     {@link Context}
-     * @param address     address
-     * @param showChooser show chooser
-     * @return {@link Intent}
-     */
     static Intent getComposeIntent(final Context context, final String address,
-            final boolean showChooser) {
+                                   final boolean showChooser) {
         Intent i = null;
 
         if (!showChooser && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -504,7 +456,7 @@ public final class ConversationListActivity extends SherlockActivity implements
      * {@inheritDoc}
      */
     public void onItemClick(final AdapterView<?> parent, final View view, final int position,
-            final long id) {
+                            final long id) {
         final Conversation c = Conversation.getConversation(this,
                 (Cursor) parent.getItemAtPosition(position), false);
         final Uri target = c.getUri();
@@ -524,7 +476,7 @@ public final class ConversationListActivity extends SherlockActivity implements
      * {@inheritDoc}
      */
     public boolean onItemLongClick(final AdapterView<?> parent, final View view,
-            final int position, final long id) {
+                                   final int position, final long id) {
         final Conversation c = Conversation.getConversation(this,
                 (Cursor) parent.getItemAtPosition(position), true);
         final Uri target = c.getUri();
@@ -555,12 +507,12 @@ public final class ConversationListActivity extends SherlockActivity implements
                 try {
                     switch (which) {
                         case WHICH_ANSWER:
-                            ConversationListActivity.this.startActivity(getComposeIntent(
-                                    ConversationListActivity.this, a, false));
+                            GroupListActivity.this.startActivity(getComposeIntent(
+                                    GroupListActivity.this, a, false));
                             break;
                         case WHICH_CALL:
                             i = new Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + a));
-                            ConversationListActivity.this.startActivity(i);
+                            GroupListActivity.this.startActivity(i);
                             break;
                         case WHICH_VIEW_CONTACT:
                             if (n == null) {
@@ -570,31 +522,31 @@ public final class ConversationListActivity extends SherlockActivity implements
                                 final Uri uri = c.getContact().getUri();
                                 i = new Intent(Intent.ACTION_VIEW, uri);
                             }
-                            ConversationListActivity.this.startActivity(i);
+                            GroupListActivity.this.startActivity(i);
                             break;
                         case WHICH_VIEW:
-                            i = new Intent(ConversationListActivity.this,
+                            i = new Intent(GroupListActivity.this,
                                     MessageListActivity.class);
                             i.setData(target);
-                            ConversationListActivity.this.startActivity(i);
+                            GroupListActivity.this.startActivity(i);
                             break;
                         case WHICH_DELETE:
                             ConversationListActivity
-                                    .deleteMessages(ConversationListActivity.this, target,
+                                    .deleteMessages(GroupListActivity.this, target,
                                             R.string.delete_thread_,
                                             R.string.delete_thread_question,
                                             null);
                             break;
                         case WHICH_MARK_SPAM:
-                            ConversationListActivity.addToOrRemoveFromSpamlist(
-                                    ConversationListActivity.this, c.getContact().getNumber());
+                            GroupListActivity.addToOrRemoveFromSpamlist(
+                                    GroupListActivity.this, c.getContact().getNumber());
                             break;
                         default:
                             break;
                     }
                 } catch (ActivityNotFoundException e) {
                     Log.e(TAG, "unable to launch activity:", e);
-                    Toast.makeText(ConversationListActivity.this, R.string.error_unknown,
+                    Toast.makeText(GroupListActivity.this, R.string.error_unknown,
                             Toast.LENGTH_LONG).show();
                 }
             }
